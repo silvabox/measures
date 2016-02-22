@@ -1,5 +1,4 @@
 require 'tablespoon'
-require 'teaspoon'
 
 describe Tablespoon do
   subject(:tablespoon) { Tablespoon.new }

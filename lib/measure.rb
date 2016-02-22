@@ -1,21 +1,55 @@
 class Measure
+  class << self
+    def converts_to?(unit)
+      self == unit || conversion(unit)
+    end
+
+    protected
+
+    def converts_to(quantity, unit)
+      conversions[unit] = quantity
+    end
+
+    def factor(unit)
+      conversion(unit) do |u, quantity|
+        if unit == u
+          quantity
+        else
+          quantity * u.factor(unit)
+        end
+      end
+    end
+
+    private
+
+    def conversions
+      @conversions ||= {}
+    end
+
+    def conversion(unit)
+      conversion = conversions.find do |u, quantity|
+        unit == u || u.converts_to?(unit)
+      end
+      if block_given?
+        yield conversion[0], conversion[1] if conversion
+      else
+        conversion
+      end
+    end
+  end
+
   def initialize(quantity = 1)
     @quantity = quantity
   end
 
-  def self.converts_to?(unit)
-    self.class == unit
-  end
-
   def converts_to?(unit)
-    return true if self.class == unit
     self.class.converts_to?(unit)
   end
 
   def as(unit)
     return self if self.class == unit
     fail 'invalid conversion' unless converts_to?(unit)
-    unit.new(quantity * conversion(unit))
+    unit.new(quantity * factor(unit))
   end
 
   def ==(other)
@@ -31,4 +65,8 @@ class Measure
   protected
 
   attr_reader :quantity
+
+  def factor(unit)
+    self.class.send(:factor, unit)
+  end
 end
