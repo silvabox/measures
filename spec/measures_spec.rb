@@ -1,4 +1,4 @@
-require 'measures'
+require 'quart'
 
 describe 'measures' do
   specify '1 tablespoon equals 3 teaspoons' do
@@ -23,5 +23,9 @@ describe 'measures' do
 
   specify '3 pints equals 96 tablespoons' do
     expect(3.pints).to eq 96.tablespoons
+  end
+
+  specify '1 teaspoon equals 8 pinches' do
+    expect(1.teaspoon).to eq 8.pinches
   end
 end

@@ -6,10 +6,10 @@ class Measure
 
     def inherited(subclass)
       name = subclass.name.downcase
-      Fixnum.send :define_method, name do
+      Numeric.send :define_method, name do
         subclass.new(self)
       end
-      Fixnum.send :alias_method, name +'s', name
+      Numeric.send :alias_method, subclass.plural_name, name
     end
 
     protected
@@ -22,6 +22,10 @@ class Measure
       conversion(unit) do |u, quantity|
         unit == u ? quantity : quantity * u.factor(unit)
       end
+    end
+
+    def plural_name
+      name.downcase + 's'
     end
 
     private
