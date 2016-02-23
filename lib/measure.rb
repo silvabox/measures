@@ -4,6 +4,14 @@ class Measure
       self == unit || conversion(unit)
     end
 
+    def inherited(subclass)
+      name = subclass.name.downcase
+      Fixnum.send :define_method, name do
+        subclass.new(self)
+      end
+      Fixnum.send :alias_method, name +'s', name
+    end
+
     protected
 
     def converts_to(quantity, unit)
@@ -12,11 +20,7 @@ class Measure
 
     def factor(unit)
       conversion(unit) do |u, quantity|
-        if unit == u
-          quantity
-        else
-          quantity * u.factor(unit)
-        end
+        unit == u ? quantity : quantity * u.factor(unit)
       end
     end
 
